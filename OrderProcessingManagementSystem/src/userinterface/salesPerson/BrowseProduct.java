@@ -1,0 +1,637 @@
+/*
+ * BrowseProduct.java
+ *
+ * Created on October 10, 2008, 9:10 AM
+ */
+package userinterface.salesPerson;
+
+
+import business.AddData;
+import business.Customer;
+import business.CustomerDirectory;
+import business.MasterOrderCatalog;
+import business.Order;
+import business.OrderItem;
+import business.Product;
+import business.ProductCatalog;
+
+import business.SalesPerson;
+
+import business.Supplier;
+import business.SupplierDirectory;
+
+import java.awt.CardLayout;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
+
+
+/**
+ *
+ * @author Neha Ghate
+ */
+public class BrowseProduct extends javax.swing.JPanel {
+
+    /** Creates new form BrowseProduct */
+    private JPanel userProcessContainer;
+    private SupplierDirectory supplierDirectory;
+   // private MasterOrderCatalog masterOrderCatalog;
+    private SalesPerson salesPerson;
+    private CustomerDirectory customerDirectory;
+    private Order order;
+    int totalComm = 0;
+    
+    boolean isCheckedOut = false;
+    
+    public BrowseProduct(JPanel userProcessContainer,SupplierDirectory supplierDirectory,
+            SalesPerson salesPerson, CustomerDirectory customerDirectory) {
+        this.salesPerson = salesPerson;
+        this.userProcessContainer = userProcessContainer;
+        this.supplierDirectory = supplierDirectory;
+        this.customerDirectory = customerDirectory;
+        
+        initComponents();
+        populateSupplierCombo();
+        storeNametxt.setText(salesPerson.getSalesPersonName());
+     
+    }
+    public void populateSupplierCombo(){
+        pharmaComboBox1.removeAllItems();
+        
+        for(Supplier supplier: supplierDirectory.getSupplierList())
+        {
+            pharmaComboBox1.addItem(supplier);
+        }
+        populateSupplierTable();
+        populateCustomerCombo();
+        //to disply product in d table
+        if(!isCheckedOut){
+        order = new Order(); //
+         }
+    }
+    
+    public void populateCustomerCombo(){
+        
+        customerJComboBox.removeAllItems();
+            for(Customer customer : customerDirectory.getCustomerList())
+            {
+                customerJComboBox.addItem(customer);
+            }
+            
+        }
+    
+        public void populateSupplierTable(){
+        
+        DefaultTableModel dtm = (DefaultTableModel) productTable.getModel();
+        dtm.setRowCount(0); //to make row count 0
+       // int rowCount = accountJTable.getRowCount();
+       Supplier supplier = (Supplier) pharmaComboBox1.getSelectedItem();
+       if(supplier!=null){
+        for (Product product : supplier.getProductCatalog().getProductList())
+        {
+           Object[] row = new Object[5];
+            row[0]=product;
+            row[1]=product.getAvailibility();
+            row[2]=product.getFloorPrice();
+            row[3]=product.getTargetPrice();
+            row[4]=product.getCeilingPrice();
+            
+            dtm.addRow(row);
+        }
+    }
+    }
+        private OrderItem CommissionCalc(OrderItem orderItem) {
+            int selectedRow = productTable.getSelectedRow();
+            int  salesPrice = Integer.parseInt(txtSalesPrice.getText());
+            Product selectedProduct = (Product) productTable.getValueAt(selectedRow, 0);
+            int commissiontemp = 0;
+            if(salesPrice > selectedProduct.getTargetPrice()){
+                commissiontemp = (10*(salesPrice)/100);
+            }
+            else{
+                commissiontemp = (5*(salesPrice)/100);   
+            }
+            int fetchQuantity = (Integer)quantitySpinner.getValue();
+            int comission = commissiontemp*fetchQuantity;
+            if(selectedProduct == orderItem.getProduct()){
+            orderItem.setCommission(comission);
+            }
+        return orderItem;
+        }
+        
+         public void refreshOrderTable(){
+        DefaultTableModel dtm = (DefaultTableModel) orderTable.getModel();
+        dtm.setRowCount(0); 
+        int oldComm =0;
+        int orderitemCommission=0;
+        for(OrderItem orderItem : order.getOrderItemList()){
+            Object[] row = new Object[4];
+            row[0]=orderItem;
+            row[1]=orderItem.getSalesPrice();
+            row[2]=orderItem.getQuantity();
+            row[3]=orderItem.getSalesPrice()*orderItem.getQuantity();
+            CommissionCalc(orderItem);
+            oldComm = orderItem.getCommission();
+            orderitemCommission = orderitemCommission + oldComm;
+           // this.totalComm = totalComm + orderItem.getCommission();
+            dtm.addRow(row);
+        }
+        txtCommission.setText(String.valueOf(orderitemCommission));
+        }
+    
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        pharmaComboBox1 = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        btnBack = new javax.swing.JButton();
+        viewProdjButton2 = new javax.swing.JButton();
+        addtoCartButton6 = new javax.swing.JButton();
+        quantitySpinner = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
+        btnSearchProduct = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtSalesPrice = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        orderTable = new javax.swing.JTable();
+        btnViewOrderItem = new javax.swing.JButton();
+        btnModifyQuantity = new javax.swing.JButton();
+        btnRemoveOrderItem = new javax.swing.JButton();
+        btnCheckOut = new javax.swing.JButton();
+        txtSearchKeyWord = new javax.swing.JTextField();
+        txtNewQuantity = new javax.swing.JTextField();
+        errorInkeyword = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        storeNametxt = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        productTable = new javax.swing.JTable();
+        customerJComboBox = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        txtCommission = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(255, 255, 255));
+        setPreferredSize(new java.awt.Dimension(750, 511));
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        pharmaComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pharmaComboBox1ActionPerformed(evt);
+            }
+        });
+        add(pharmaComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 250, -1));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setText("Supplier Company");
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 170, 30));
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setText("Supplier Product Catalog");
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 240, -1));
+
+        btnBack.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnBack.setText("<< Back");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+        add(btnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 590, 90, -1));
+
+        viewProdjButton2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        viewProdjButton2.setText("View Product Detail");
+        viewProdjButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewProdjButton2ActionPerformed(evt);
+            }
+        });
+        add(viewProdjButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 340, 160, -1));
+
+        addtoCartButton6.setText("ADD TO CART");
+        addtoCartButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addtoCartButton6ActionPerformed(evt);
+            }
+        });
+        add(addtoCartButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 340, -1, -1));
+
+        quantitySpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        add(quantitySpinner, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 340, 50, -1));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Quantity:");
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 340, -1, -1));
+
+        btnSearchProduct.setText("Search Product");
+        btnSearchProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchProductActionPerformed(evt);
+            }
+        });
+        add(btnSearchProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 140, -1, -1));
+
+        jLabel6.setText("Sales Price");
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 340, -1, -1));
+        add(txtSalesPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 340, 40, -1));
+
+        jLabel7.setText("Item in cart");
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 380, -1, -1));
+
+        orderTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Item Name", "Price", "Quantity", "Total Amount"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(orderTable);
+
+        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 580, 90));
+
+        btnViewOrderItem.setText("View Item");
+        btnViewOrderItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewOrderItemActionPerformed(evt);
+            }
+        });
+        add(btnViewOrderItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 550, -1, -1));
+
+        btnModifyQuantity.setText("Modify Quantity");
+        btnModifyQuantity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModifyQuantityActionPerformed(evt);
+            }
+        });
+        add(btnModifyQuantity, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 550, -1, -1));
+
+        btnRemoveOrderItem.setText("Remove");
+        btnRemoveOrderItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveOrderItemActionPerformed(evt);
+            }
+        });
+        add(btnRemoveOrderItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 550, -1, -1));
+
+        btnCheckOut.setText("Check out");
+        btnCheckOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckOutActionPerformed(evt);
+            }
+        });
+        add(btnCheckOut, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 550, -1, -1));
+        add(txtSearchKeyWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 140, 110, -1));
+        add(txtNewQuantity, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 550, 70, -1));
+
+        errorInkeyword.setForeground(new java.awt.Color(255, 0, 0));
+        add(errorInkeyword, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 170, 110, 20));
+
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setFont(new java.awt.Font("Traditional Arabic", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 153, 102));
+        jLabel3.setText("Order items ");
+        jLabel3.setIconTextGap(7);
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, -1));
+
+        storeNametxt.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        storeNametxt.setForeground(new java.awt.Color(0, 0, 255));
+        storeNametxt.setText("jLabel4");
+        add(storeNametxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, -1, -1));
+
+        productTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Product Name", "Product Availibility", "Floor Price", "Target Price", "Ceiling Price"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(productTable);
+
+        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 200, 550, 90));
+
+        customerJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        add(customerJComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, -1, -1));
+
+        jLabel4.setText("Select Customer :");
+        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 70, -1, -1));
+        add(txtCommission, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 170, 40, 20));
+
+        jLabel8.setText("Commission :");
+        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 170, -1, -1));
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void pharmaComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pharmaComboBox1ActionPerformed
+        // TODO add your handling code here:
+        populateSupplierTable();
+        //to make sure products are displayed by default .
+        
+    }//GEN-LAST:event_pharmaComboBox1ActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        // TODO add your handling code here:
+        //coz if we dont checkout and click back the availblty shud b updated.
+        if(order.getOrderItemList().size()>0){
+            for(OrderItem oi: order.getOrderItemList()){
+                Product product = oi.getProduct();
+                product.setAvailibility(oi.getQuantity()+product.getAvailibility());
+                
+            }
+            order.getOrderItemList().removeAll(order.getOrderItemList());
+        }
+        userProcessContainer.remove(this);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void viewProdjButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewProdjButton2ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = productTable.getSelectedRow();
+        if(selectedRow<0){
+            JOptionPane.showMessageDialog(null, "Please select a row","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Product product = (Product) productTable.getValueAt(selectedRow, 0);
+        ViewProductDetailJPanel viewDrugDetails = new ViewProductDetailJPanel(userProcessContainer,product);
+        userProcessContainer.add("viewDrugDetails",viewDrugDetails);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_viewProdjButton2ActionPerformed
+
+    private void addtoCartButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addtoCartButton6ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = productTable.getSelectedRow();
+        Customer customer = (Customer) customerJComboBox.getSelectedItem();
+        Product selectedProduct;
+        int newSoldCount = 0;
+        int totalAmountPaidByCustomer = 0;
+        if(selectedRow<0){
+            JOptionPane.showMessageDialog(null, "Please select a row","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        else{
+            selectedProduct = (Product) productTable.getValueAt(selectedRow, 0);
+        }
+       
+        int salesPrice =0;
+        try{
+            salesPrice = Integer.parseInt(txtSalesPrice.getText());
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "enter valid sales price","warning",JOptionPane.ERROR_MESSAGE);
+                    return;
+        }
+        
+               
+        
+            if (!(selectedProduct.getFloorPrice() <= salesPrice && 
+                    salesPrice <= selectedProduct.getCeilingPrice())){
+                JOptionPane.showMessageDialog(null, "sales price should be between ceiling and floor price","warning",JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+           int fetchQuantity = (Integer)quantitySpinner.getValue();//interger type cast coz getvalue sends a n object wch has to be casted to int
+           if(fetchQuantity <=0){
+               JOptionPane.showMessageDialog(null, "Please select atleast 1 quantity","warning",JOptionPane.ERROR_MESSAGE);
+               return;
+           }
+           else if(fetchQuantity <= selectedProduct.getAvailibility()){
+               boolean alreadyPresent=false;
+               for(OrderItem orderItems : order.getOrderItemList()){
+                   if (orderItems.getProduct()==selectedProduct){
+                       int oldAvailibility = selectedProduct.getAvailibility();
+                       int newAvailibility = oldAvailibility - fetchQuantity;
+                        int oldSoldCount = fetchQuantity;
+                       if(newSoldCount==0){
+                           selectedProduct.setProductSellCount(oldSoldCount);
+                       }
+                       else{
+                        newSoldCount = newSoldCount + oldSoldCount;
+                        selectedProduct.setProductSellCount(newSoldCount);
+                       }
+                       selectedProduct.setAvailibility(newAvailibility);
+                       orderItems.setQuantity(fetchQuantity + orderItems.getQuantity());
+                       //int presentTotalSales = orderItems.getSalesPrice()*orderItems.getQuantity();
+                       //totalAmountPaidByCustomer =totalAmountPaidByCustomer+ presentTotalSales;
+                       refreshOrderTable();
+                       populateSupplierTable();
+                       alreadyPresent=true;
+                       break; //wehn we get the order item v need not traverse the whole list
+                   }
+               }
+               if(!alreadyPresent){
+                       int oldAvailibility = selectedProduct.getAvailibility();
+                       int newAvailibility = oldAvailibility - fetchQuantity;
+                        int oldSoldCount = fetchQuantity;
+                       if(newSoldCount==0){
+                           selectedProduct.setProductSellCount(oldSoldCount);
+                       }
+                       else{
+                        newSoldCount = newSoldCount + oldSoldCount;
+                        selectedProduct.setProductSellCount(newSoldCount);
+                       }
+                       selectedProduct.setAvailibility((newAvailibility));
+                       // for(OrderItem orderItems : order.getOrderItemList()){
+                  // if (orderItems.getProduct()==selectedProduct){
+                      // int presentTotalSales = orderItems.getSalesPrice()*orderItems.getQuantity();
+                      /* int presentTotalSales = fetchQuantity*salesPrice;
+                       totalAmountPaidByCustomer =totalAmountPaidByCustomer+ presentTotalSales;
+                       customer.setTotalAmount(totalAmountPaidByCustomer);*/
+                  // }
+                    //    }
+                       order.addOrderItem(selectedProduct, fetchQuantity, salesPrice , salesPerson, customer);
+                       refreshOrderTable();
+                       populateSupplierTable();
+               }
+           }
+               else{
+                   JOptionPane.showMessageDialog(null, "Please quty shud b > aval","warning",JOptionPane.ERROR_MESSAGE);
+               }
+    }//GEN-LAST:event_addtoCartButton6ActionPerformed
+
+    private void btnCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckOutActionPerformed
+        // TODO add your handling code here:
+        if(order.getOrderItemList().size()>=0){
+            MasterOrderCatalog masterOrderCatalog = salesPerson.getMasterOrderCatalog();
+            masterOrderCatalog.addOrder(order,salesPerson);
+             Customer customer = (Customer) customerJComboBox.getSelectedItem();
+            int totalAmount =0;
+            int totalSales=0;
+            for(OrderItem oi : order.getOrderItemList()){
+                 if(oi.getSalesPrice() > oi.getProduct().getTargetPrice()){
+                      int presentTotalSales = oi.getSalesPrice()*oi.getQuantity();
+                       totalAmount =totalAmount+ presentTotalSales;
+                   }
+            }
+            salesPerson.setTotalAmount(totalAmount);
+            for(OrderItem oi : order.getOrderItemList()){
+                 if(oi.getCustomer() == customer){
+                      int presentTotalSales = oi.getSalesPrice()*oi.getQuantity();
+                       totalSales =totalSales+ presentTotalSales;
+                   }
+            }
+            
+            customer.setTotalAmount(totalSales);
+            salesPerson.setMasterOrderCatalog(masterOrderCatalog);
+            isCheckedOut=true;
+            order = new Order();//fr next order
+            
+            refreshOrderTable();
+            populateSupplierTable();
+            JOptionPane.showMessageDialog(null, "Items are checked out!","Info",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "No order items present in cart","warning",JOptionPane.ERROR_MESSAGE);
+        }
+       
+    }//GEN-LAST:event_btnCheckOutActionPerformed
+
+    private void btnModifyQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModifyQuantityActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = orderTable.getSelectedRow();
+        
+        if(selectedRow<0){
+            JOptionPane.showMessageDialog(null,"select a row","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if(!txtNewQuantity.getText().isEmpty() && !txtNewQuantity.getText().equals("0")){
+            OrderItem orderItem = (OrderItem) orderTable.getValueAt(selectedRow, 0);
+            int currentAvailibility = orderItem.getProduct().getAvailibility();
+            int oldQty = orderItem.getQuantity();
+            int newQty = Integer.parseInt(txtNewQuantity.getText());
+            
+            if(newQty > (currentAvailibility+oldQty)){
+                JOptionPane.showMessageDialog(null,"qty is more than the available one","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+            }
+            orderItem.setQuantity(newQty);
+            orderItem.getProduct().setAvailibility(currentAvailibility+ (oldQty - newQty));
+            
+            refreshOrderTable();
+            populateSupplierTable();
+        }
+    }//GEN-LAST:event_btnModifyQuantityActionPerformed
+
+    private void btnSearchProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchProductActionPerformed
+        
+        if(txtSearchKeyWord.getText().trim().length() >= 0){
+           try {
+               int  drugID = Integer.parseInt(txtSearchKeyWord.getText());
+               Product product = supplierDirectory.searchProduct(drugID);
+               if(product!=null){
+               ViewProductDetailJPanel viewDrugDetail = new ViewProductDetailJPanel(userProcessContainer, product);
+               userProcessContainer.add("viewDrugDetail",viewDrugDetail);
+               CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+               layout.next(userProcessContainer);
+        }else{ 
+        JOptionPane.showMessageDialog(null, "No such product is present","Warning",JOptionPane.INFORMATION_MESSAGE);
+        }
+         errorInkeyword.setText("");
+            }
+            catch(NumberFormatException nfe){
+                errorInkeyword.setText("Enter a Product ID .");
+            }
+        
+        }         
+    }//GEN-LAST:event_btnSearchProductActionPerformed
+
+    private void btnRemoveOrderItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveOrderItemActionPerformed
+
+        int selectedRow = orderTable.getSelectedRow();
+        
+        if(selectedRow<=0){
+            JOptionPane.showMessageDialog(null,"select a row","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        OrderItem orderItem = (OrderItem) orderTable.getValueAt(selectedRow, 0);
+        
+        int oldQty = orderItem.getProduct().getAvailibility();
+        int newQty = oldQty + orderItem.getQuantity();
+        orderItem.getProduct().setAvailibility(newQty);
+        order.removeOrderItem(orderItem);
+        populateSupplierTable();
+        JOptionPane.showMessageDialog(null,"order item is removed successfully","Order item deletion",JOptionPane.INFORMATION_MESSAGE);
+        
+    }//GEN-LAST:event_btnRemoveOrderItemActionPerformed
+
+    private void btnViewOrderItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewOrderItemActionPerformed
+
+         int selectedRow =orderTable.getSelectedRow();
+        if(selectedRow<0){
+            JOptionPane.showMessageDialog(null, "Please select a row","warning",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+       
+        OrderItem oi =  (OrderItem) orderTable.getValueAt(selectedRow, 0);
+        ViewOrderItemDetailJPanel viewOrderItem = new ViewOrderItemDetailJPanel(userProcessContainer,oi);
+        userProcessContainer.add("viewOrderItem",viewOrderItem);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_btnViewOrderItemActionPerformed
+
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addtoCartButton6;
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnCheckOut;
+    private javax.swing.JButton btnModifyQuantity;
+    private javax.swing.JButton btnRemoveOrderItem;
+    private javax.swing.JButton btnSearchProduct;
+    private javax.swing.JButton btnViewOrderItem;
+    private javax.swing.JComboBox customerJComboBox;
+    private javax.swing.JLabel errorInkeyword;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable orderTable;
+    private javax.swing.JComboBox pharmaComboBox1;
+    private javax.swing.JTable productTable;
+    private javax.swing.JSpinner quantitySpinner;
+    private javax.swing.JLabel storeNametxt;
+    private javax.swing.JLabel txtCommission;
+    private javax.swing.JTextField txtNewQuantity;
+    private javax.swing.JTextField txtSalesPrice;
+    private javax.swing.JTextField txtSearchKeyWord;
+    private javax.swing.JButton viewProdjButton2;
+    // End of variables declaration//GEN-END:variables
+
+    
+}
